@@ -1,25 +1,25 @@
-int const sens_numb= 5;
-int Lmot[]= {5,3};
-int Rmot[]= {10,11};
-int sens[]= {14,15,16,17,18};
-int threshold=200;
+int const sens_numb= 5; //total number of sensor used 
+int Lmot[]= {5,3}; //pin numbers of left motor
+int Rmot[]= {10,11}; // pin numbers of right motor
+int sens[]= {14,15,16,17,18}; // pin numbers of sensor
+int threshold=200; //sensor's analog value which can make difference between black and white
 
-int min_speed=150,avg_speed=200,new_speed;
+int min_speed=150,avg_speed=200,new_speed; // it can be changed by calibration
 
-void  val_read();
-void ser_print();
-void weight_gen();
-void straight();
-void left();
-void right();
-void stp();
-void pid_line_follow();;
-void direct();
+void  val_read(); //this function reads the anlog values of sensors and converts those into digital values
+void ser_print(); //consists of all serial print output
+void weight_gen(); //some sample weight with respect to number of sensor generated for calculation
+void straight(); // straight direction move of bot
+void left(); //left direction move of bot
+void right(); //right direction move of bot
+void stp();  // for stopping the bot
+void pid_line_follow(); //it is the function for PID control 
+void direct(); //for deciding the direction
 
 
 int j,k;
 int analog_val[sens_numb], digital_val[sens_numb], weight[sens_numb];
-int P=0, I=0, D=0, correction, error=0, previous_error=0, kp=1, kd=1, ki=1;
+int P=0, I=0, D=0, correction, error=0, previous_error=0, kp=5, kd=5, ki=5; //value of kp,kd,ki need to be obtained by calibration
 int weighted_val[sens_numb], total_weight;
 void setup()
 {
