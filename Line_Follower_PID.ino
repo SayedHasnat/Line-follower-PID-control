@@ -4,7 +4,7 @@ int Rmot[]= {10,11};
 int sens[]= {14,15,16,17,18};
 int threshold=200;
 
-int normal_speed=180;
+int min_speed=150,avg_speed=200,new_speed;
 
 void  val_read();
 void ser_print();
@@ -100,9 +100,9 @@ void weight_gen()
 
 void straight()
 {
-  analogWrite(Lmot[0],correction);
+  analogWrite(Lmot[0],avg_speed);
   analogWrite(Lmot[1],0);
-  analogWrite(Rmot[1],correction);
+  analogWrite(Rmot[1],avg_speed);
   analogWrite(Rmot[2],0);
 }
 
@@ -110,13 +110,13 @@ void left()
 {
   analogWrite(Lmot[0],0);
   analogWrite(Lmot[1],0);
-  analogWrite(Rmot[1],correction);
+  analogWrite(Rmot[1],new_speed);
   analogWrite(Rmot[2],0);
 }
 
 void right()
 {
-  analogWrite(Lmot[0],correction);
+  analogWrite(Lmot[0],new_speed);
   analogWrite(Lmot[1],0);
   analogWrite(Rmot[1],0);
   analogWrite(Rmot[2],0);
@@ -139,11 +139,13 @@ void pid_line_follow()
   }
   int current_weight=abs(total_weight);
   int target_weight=0;
-  error = target_weight - current_weight;
+  error =  current_weight - target_weight;
   P=error*kp;
+  I=I+error;
   I=I*ki;
-  D=error - previous_error;
+  D=kd * (error - previous_error);
   correction= P+I+D;
+  new_speed=min_speed + correction;
   previous_error=error; 
 }
 
@@ -167,5 +169,5 @@ void loop()
   ser_print();
   pid_line_follow();
   direct();
-  delay(3000);
+  //delay(3000);
 }
