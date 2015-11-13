@@ -1,3 +1,16 @@
+/*Author:  Sayed Hasnat  
+          EEE, Khulna University of Engineering & Technology, khulna, Bangladesh.
+          e-mail: sayedhasnat6[at]gmail[dot]com
+          
+          Shantanu Sen Gupta
+          EEE, Khulna University of Engineering & Technology, khulna, Bangladesh.
+          e-mail: shantanukuet2k12[at]gmail[dot]com
+    
+    Core contributor:
+          Manash
+			    Khulna University of Engineering & Technology, EEE
+			    e-mail: manashmndl[at]gmail[dot]com
+      */
 int const sens_numb= 5; //total number of sensor used 
 int Lmot[]= {5,3}; //pin numbers of left motor
 int Rmot[]= {10,11}; // pin numbers of right motor
