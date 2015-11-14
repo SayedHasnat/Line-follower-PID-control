@@ -13,7 +13,7 @@
       */
 int const sens_numb= 5; //total number of sensor used 
 int Lmot[]= {5,3}; //pin numbers of left motor
-int Rmot[]= {10,11}; // pin numbers of right motor
+int Rmot[]= {6,9}; // pin numbers of right motor
 int sens[]= {14,15,16,17,18}; // pin numbers of sensor
 int threshold=200; //sensor's analog value which can make difference between black and white
 
