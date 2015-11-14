@@ -8,8 +8,8 @@
     
     Core contributor:
           Manash
-			    Khulna University of Engineering & Technology, EEE
-			    e-mail: manashmndl[at]gmail[dot]com
+	  Khulna University of Engineering & Technology, EEE
+	  e-mail: manashmndl[at]gmail[dot]com
       */
 #include <Arduino.h>
 #include <math.h>
