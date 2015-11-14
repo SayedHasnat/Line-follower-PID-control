@@ -11,16 +11,22 @@
 			    Khulna University of Engineering & Technology, EEE
 			    e-mail: manashmndl[at]gmail[dot]com
       */
+#include <Arduino.h>
+#include <math.h>
+#include <SoftwareSerial.h> //for bluetooth interface
+SoftwareSerial bt(10, 11);
+
 int const sens_numb= 5; //total number of sensor used 
 int Lmot[]= {5,3}; //pin numbers of left motor
 int Rmot[]= {6,9}; // pin numbers of right motor
-int sens[]= {14,15,16,17,18}; // pin numbers of sensor
+int  sens[]= {14,15,16,17,18}; // pin numbers of sensor
 int threshold=200; //sensor's analog value which can make difference between black and white
 
 int min_speed=150,avg_speed=200,new_speed; // it can be changed by calibration
 
 void  val_read(); //this function reads the anlog values of sensors and converts those into digital values
 void ser_print(); //consists of all serial print output
+void bt_print(); //for taking the output using bluetooth 
 void weight_gen(); //some sample weight with respect to number of sensor generated for calculation
 void straight(); // straight direction move of bot
 void left(); //left direction move of bot
@@ -45,18 +51,20 @@ void setup()
       pinMode(Rmot[j],OUTPUT);
     }
    Serial.begin(9600);
-   
+   bt.begin(9600);
+   delay(10);
 }
 
 void  val_read()
 {
+ 
   for(j=0;j<sens_numb;j++)
     {
        analog_val[j]=analogRead(sens[j]);
       if (analog_val[j]<=threshold)
-        digital_val[j]=0;    //for black value< threashold
+        { digital_val[j]=0; }    //for black value< threashold
       else
-        digital_val[j]=1;
+        { digital_val[j]=1; }
     }
 }
 
@@ -89,11 +97,40 @@ void ser_print()
     Serial.println("##################");
 }
 
+void bt_print()
+{
+    bt.println("##################");
+    bt.println("analog values");
+  for(j=0;j<sens_numb;j++)
+    bt.println("Sensor"+String(j)+"="+String(analog_val[j]));
+    bt.println(" ");
+    
+    bt.println("##################");
+    bt.println("digital values");
+  for(j=0;j<sens_numb;j++)
+    bt.print("  " + String(digital_val[j]));
+    bt.println(" ");
+    
+    bt.println("##################");
+    bt.println("Generated weight");
+  for(j=0;j<sens_numb;j++)
+    bt.print("  "+ String(weight[j]));
+    bt.println(" ");
+    
+    bt.println("##################");
+    bt.println("Weighted Value");
+  for(j=0;j<sens_numb;j++)
+    bt.print("  "+ String(weighted_val[j]));
+    bt.println(" ");
+    bt.println("##################");
+}
+
 void weight_gen()
 {
+    total_weight=0;
      k=sens_numb/2;
    if(sens_numb%2!=0){
-       k= -k;
+       k= k*(-1);
      for(j=0;j<sens_numb;j++){
        weight[j]=k;
        k=k+1;
@@ -101,7 +138,7 @@ void weight_gen()
      }
    }  
    else{
-     k= -k;
+     k= k*(-1);
      for(j=0;j<sens_numb;j++){
        if(k==0)
          k=1;
@@ -109,53 +146,55 @@ void weight_gen()
        k=k+1;
      }
    }
+   
+   for(j=0;j<sens_numb;j++){
+    weighted_val[j] =weight[j] * digital_val[j];
+    total_weight = total_weight + weighted_val[j];
+  }
 }
 
 void straight()
 {
   analogWrite(Lmot[0],avg_speed);
   analogWrite(Lmot[1],0);
-  analogWrite(Rmot[1],avg_speed);
-  analogWrite(Rmot[2],0);
+  analogWrite(Rmot[0],avg_speed);
+  analogWrite(Rmot[1],0);
 }
 
 void left()
 {
   analogWrite(Lmot[0],0);
   analogWrite(Lmot[1],0);
-  analogWrite(Rmot[1],new_speed);
-  analogWrite(Rmot[2],0);
+  analogWrite(Rmot[0],new_speed);
+  analogWrite(Rmot[1],0);
 }
 
 void right()
 {
   analogWrite(Lmot[0],new_speed);
   analogWrite(Lmot[1],0);
+  analogWrite(Rmot[0],0);
   analogWrite(Rmot[1],0);
-  analogWrite(Rmot[2],0);
 }
 
 void stp()
 {
   analogWrite(Lmot[0],0);
   analogWrite(Lmot[1],0);
+  analogWrite(Rmot[0],0);
   analogWrite(Rmot[1],0);
-  analogWrite(Rmot[2],0);
 }
 
 void pid_line_follow()
 {
   
-  for(j=0;j<sens_numb;j++){
-    weighted_val[j] =weight[j] * digital_val[j];
-    total_weight = total_weight + weighted_val[j];
-  }
+  
   int current_weight=abs(total_weight);
   int target_weight=0;
   error =  current_weight - target_weight;
   P=error*kp;
-  I=I+error;
-  I=I*ki;
+  
+  I=(error+previous_error)*ki; //confused, will be updated later
   D=kd * (error - previous_error);
   correction= P+I+D;
   new_speed=min_speed + correction;
@@ -171,7 +210,7 @@ void direct()
     straight();
    else if(total_weight<0)
      left();
-   else if(total_weight>0)
+   else //if(total_weight>0)
      right();
 }
 
@@ -180,7 +219,15 @@ void loop()
   val_read();
   weight_gen();
   ser_print();
+  bt_print();
   pid_line_follow();
   direct();
-  //delay(3000);
+//  Serial.println("Total weight="+String(total_weight));
+//  Serial.println("error="+String(error));
+//  Serial.println("P="+String(P));
+//  Serial.println("I="+String(I));
+//  Serial.println("D="+String(D));
+//  Serial.println("new speed="+String(new_speed));
+//  delay(3000);
+  
 }
