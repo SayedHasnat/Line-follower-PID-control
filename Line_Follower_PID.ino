@@ -1,4 +1,4 @@
-/*Author:  Sayed Hasnat  
+/*Author:  Sayed hasnat  
           EEE, Khulna University of Engineering & Technology, khulna, Bangladesh.
           e-mail: sayedhasnat6[at]gmail[dot]com
           
@@ -17,7 +17,7 @@
 SoftwareSerial bt(10, 11);
 
 int const sens_numb= 5; //total number of sensor used 
-int Lmot[]= {5,3}; //pin numbers of left motor
+int Lmot[]= {3,5}; //pin numbers of left motor. 
 int Rmot[]= {6,9}; // pin numbers of right motor
 int  sens[]= {14,15,16,17,18}; // pin numbers of sensor
 int threshold=200; //sensor's analog value which can make difference between black and white
@@ -204,9 +204,9 @@ void pid_line_follow()
 void direct()
 {
   int mid = (sens_numb/2)+1;
-   if(total_weight==0 && sens[mid]==1)
+   if(total_weight==0 && digital_val[mid]==1)
     stp();
-   else if(total_weight==0&&sens[mid]==0)
+   else if(total_weight==0&&digital_val[mid]==0)
     straight();
    else if(total_weight<0)
      left();
@@ -218,8 +218,8 @@ void loop()
 {
   val_read();
   weight_gen();
-  ser_print();
-  bt_print();
+  //ser_print(); // use this if you want to see the output in serial monitor
+  //bt_print(); // use this if you want to see output via bluetooth. I have used 'SENA Bterm' software in my android to see the output via bluetooth
   pid_line_follow();
   direct();
 //  Serial.println("Total weight="+String(total_weight));
