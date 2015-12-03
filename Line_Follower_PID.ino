@@ -1,10 +1,6 @@
 /*Author:  Sayed hasnat  
           EEE, Khulna University of Engineering & Technology, khulna, Bangladesh.
           e-mail: sayedhasnat6[at]gmail[dot]com
-          
-          Shantanu Sen Gupta
-          EEE, Khulna University of Engineering & Technology, khulna, Bangladesh.
-          e-mail: shantanukuet2k12[at]gmail[dot]com
     
     Core contributor:
           Manash
